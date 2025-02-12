@@ -4,6 +4,25 @@ An automatic mulitlingual sentence aligner.
 
 Bertalign is designed to facilitate the construction of multilingual parallel corpora and translation memories, which have a wide range of applications in translation-related research such as corpus-based translation studies, contrastive linguistics, computer-assisted translation, translator education and machine translation.
 
+## MaTOS fork
+In the context of the [MaTOS project](https://anr-matos.github.io/), we have made a few changes to the original implementation of https://github.com/bfsujason/bertalign/
+
+### Language identification
+We replaced `googletrans` by `fasttext` to remain open-source.
+
+### Sentence segmentation
+We replaced `sentence-splitter` by `trankit` after a few trial and errors.
+
+## Installation
+
+```sh
+mamba create --name trankit python=3.10
+mamba install -c conda-forge sentencepiece=0.2.0
+mamba activate trankit
+pip install -e .
+```
+
+
 ## Approach
 
 Bertalign uses [sentence-transformers](https://github.com/UKPLab/sentence-transformers) to represent source and target sentences so that semantically similar sentences in different languages are mapped onto similar vector spaces. Then a two-step algorithm based on dynamic programming is performed: 1) Step 1 finds the 1-1 alignments for approximate anchor points; 2) Step 2 limits the search path to the anchor points and extracts all the valid alignments with 1-many, many-1 or many-to-many relations between the source and target sentences.
@@ -12,13 +31,12 @@ Bertalign uses [sentence-transformers](https://github.com/UKPLab/sentence-transf
 
 According to our experiments, Bertalign achieves more accurate results on [Text+Berg](./text+berg), a publicly available German-French parallel corpus, than the traditional length-, dictionary-, or MT-based alignment methods as reported in [Thompson & Koehn (2019)](https://aclanthology.org/D19-1136/)
 
-## Languges Supported
+## Languages Supported
 
 Alignment between 25 languages: Catalan (ca), Chinese (zh), Czech (cs), Danish (da), Dutch (nl), English(en), Finnish (fi), French (fr), German (de), Greek (el), Hungarian (hu), Icelandic (is), Italian (it), Lithuanian (lt), Latvain (lv), Norwegian (no), Polish (pl), Portuguese (pt), Romanian (ro), Russian (ru), Slovak (sk), Slovenian (sl), Spanish (es), Swedish (sv), and Turkish (tr).
 
-## Installation
+FIXME: why not more given the languages supported by LaBSE?
 
-Please see [requirements.txt](./requirements.txt) for installation. 
 
 ### You can also install Bertalign and run the examples directly in a [Google Colab notebook](https://colab.research.google.com/drive/123GhXwgwmQp1F5SVZ74_uIgyxo6hLRq0?usp=sharing).
 
