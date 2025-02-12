@@ -1,34 +1,13 @@
-import re
-# from googletrans import Translator
 from langcodes import *
 import fasttext
+# FIXME custom path
 lid_model = fasttext.load_model('/lustre/fswork/projects/rech/mrn/ujd84yr/FastText/lid.176.ftz')
 
-from sentence_splitter import SentenceSplitter
-
 def clean_text(text):
-    clean_text = []
-    text = text.strip()
-    lines = text.splitlines()
-    for line in lines:
-        line = line.strip()
-        if line:
-            line = re.sub('\s+', ' ', line)
-            clean_text.append(line)
-    return "\n".join(clean_text)
+    return " ".join(text.split())
     
-def gt_detect_lang(text):
-    translator = Translator(service_urls=[
-      'translate.google.com.hk',
-    ])
-    max_len = 200
-    chunk = text[0 : min(max_len, len(text))]
-    lang = translator.detect(chunk).lang
-    if lang.startswith('zh'):
-        lang = 'zh'
-    return lang
-
 # fasttext predict lang on line at a time
+# FIXME can't we rely on trankit's langid directly?
 def detect_lang(text):
     max_len = 200
     first, *others = text.splitlines()
@@ -38,37 +17,6 @@ def detect_lang(text):
     if lang.startswith('zh'):
         lang = 'zh'
     return lang
-
-def split_sents(text, lang):
-    if lang in LANG.SPLITTER:
-        if lang == 'zh':
-            sents = _split_zh(text)
-        else:
-            splitter = SentenceSplitter(language=lang)
-            sents = splitter.split(text=text) 
-            sents = [sent.strip() for sent in sents]
-        return sents
-    else:
-        raise Exception('The language {} is not supported yet.'.format(LANG.ISO[lang]))
-    
-def _split_zh(text, limit=1000):
-        sent_list = []
-        text = re.sub('(?P<quotation_mark>([。？！](?![”’"\'）])))', r'\g<quotation_mark>\n', text)
-        text = re.sub('(?P<quotation_mark>([。？！]|…{1,2})[”’"\'）])', r'\g<quotation_mark>\n', text)
-
-        sent_list_ori = text.splitlines()
-        for sent in sent_list_ori:
-            sent = sent.strip()
-            if not sent:
-                continue
-            else:
-                while len(sent) > limit:
-                    temp = sent[0:limit]
-                    sent_list.append(temp)
-                    sent = sent[limit:]
-                sent_list.append(sent)
-
-        return sent_list
         
 def yield_overlaps(lines, num_overlaps):
     lines = [_preprocess_line(line) for line in lines]
@@ -93,33 +41,6 @@ def _preprocess_line(line):
     return line
     
 class LANG:
-    SPLITTER = {
-        'ca': 'Catalan',
-        'zh': 'Chinese',
-        'cs': 'Czech',
-        'da': 'Danish',
-        'nl': 'Dutch',
-        'en': 'English',
-        'fi': 'Finnish',
-        'fr': 'French',
-        'de': 'German',
-        'el': 'Greek',
-        'hu': 'Hungarian',
-        'is': 'Icelandic',
-        'it': 'Italian',
-        'lt': 'Lithuanian',
-        'lv': 'Latvian',
-        'no': 'Norwegian',
-        'pl': 'Polish',
-        'pt': 'Portuguese',
-        'ro': 'Romanian',
-        'ru': 'Russian',
-        'sk': 'Slovak',
-        'sl': 'Slovenian',
-        'es': 'Spanish',
-        'sv': 'Swedish',
-        'tr': 'Turkish',
-    }
     ISO = {
 		'aa': 'Afar',
 		'ab': 'Abkhaz',

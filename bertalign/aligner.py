@@ -1,20 +1,22 @@
+from typing import List
+
 import numpy as np
 
 from bertalign import model
 from bertalign.corelib import *
 from bertalign.utils import *
 
+
 class Bertalign:
     def __init__(self,
-                 src,
-                 tgt,
+                 src_sents: List[str],
+                 tgt_sents: List[str],
                  max_align=5,
                  top_k=3,
                  win=5,
                  skip=-0.1,
                  margin=True,
                  len_penalty=True,
-                 is_split=False,
                  src_lang = None,
                  tgt_lang = None,
                  cos_similarity = True,
@@ -27,20 +29,6 @@ class Bertalign:
         self.margin = margin
         self.len_penalty = len_penalty
         
-        src = clean_text(src)
-        tgt = clean_text(tgt)
-        if src_lang is None:
-            src_lang =  detect_lang(src)
-        if tgt_lang is None:
-            tgt_lang = detect_lang(tgt)
-        
-        if is_split:
-            src_sents = src.splitlines()
-            tgt_sents = tgt.splitlines()
-        else:
-            src_sents = split_sents(src, src_lang)
-            tgt_sents = split_sents(tgt, tgt_lang)
- 
         src_num = len(src_sents)
         tgt_num = len(tgt_sents)
         

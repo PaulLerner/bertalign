@@ -1,6 +1,7 @@
+numpy==1.26.4
 numba==0.60.0
 #faiss-cpu==1.7.2
 faiss-gpu==1.7.2
-googletrans==4.0.0rc1
-sentence-splitter==1.4
+trankit==1.1.2
 sentence-transformers==3.2.1
+pandas==2.2.3
