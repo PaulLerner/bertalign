@@ -41,7 +41,7 @@ def second_back_track_score(i,j, pointers, cost, search_path, a_types, src_lens,
         if a in [0,1]:
             # in case of empty alignment, the length is 3 for "PAD", 
             # we put the length ratio as NaN to distinguish it with other cases
-            length_ratio.append('NaN')
+            length_ratio.append(float("nan"))
         else:
             src_l = src_lens[s - 1, i - 1]
             tgt_l = tgt_lens[t - 1, j - 1]
