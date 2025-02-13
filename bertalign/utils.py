@@ -1,7 +1,6 @@
-from langcodes import *
-import fasttext
+#import fasttext
 # FIXME custom path
-lid_model = fasttext.load_model('/lustre/fswork/projects/rech/mrn/ujd84yr/FastText/lid.176.ftz')
+#lid_model = fasttext.load_model('/lustre/fswork/projects/rech/mrn/ujd84yr/FastText/lid.176.ftz')
 
 def clean_text(text):
     return " ".join(text.split())

@@ -2,13 +2,13 @@ from typing import List
 
 import numpy as np
 
-from bertalign import model
 from bertalign.corelib import *
 from bertalign.utils import *
 
 
 class Bertalign:
     def __init__(self,
+                 model,
                  src_sents: List[str],
                  tgt_sents: List[str],
                  max_align=5,
@@ -103,14 +103,16 @@ class Bertalign:
                 i+=1
             print(to_print)
             
-
-    def store_sents(self, src_store_path, tgt_store_path):
+    def get_sents(self):
         src_lines = []
         tgt_lines = []
         for bead in (self.result):
             src_lines.append( self._get_line(bead[0], self.src_sents))
             tgt_lines.append( self._get_line(bead[1], self.tgt_sents))
+        return src_lines, tgt_lines
 
+    def store_sents(self, src_store_path, tgt_store_path):
+        src_lines, tgt_lines = self.get_sents()
         with open(src_store_path, 'w', encoding = 'utf-8') as f:
             f.write('\n'.join(src_lines))
 
