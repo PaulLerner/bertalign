@@ -2,6 +2,7 @@ import pandas as pd
 from jsonargparse import CLI
 from pathlib import Path
 import json
+import logging
 
 import trankit
 
@@ -14,10 +15,12 @@ def main(
         data_path: Path, 
         model_name: str = "sentence-transformers/LaBSE", 
         trankit_cache_dir: Path = None, 
-        src_lang: str = "en"
+        src_lang: str = "en",
+        verbose: int = logging.INFO
     ):
     """Multi-parallel alignment from multiple bilingual alignments using Bertalign"""
-    data = pd.read_csv(data_path, index_col="Unnamed: 0")[:10]
+    logging.basicConfig(level=verbose)
+    data = pd.read_csv(data_path, index_col="Unnamed: 0")
     model = Encoder(model_name)
 
     sentences = {key: {} for key in data.index}
