@@ -84,6 +84,7 @@ def second_pass_align(src_vecs,
                       align_types,
                       char_ratio,
                       skip,
+                      len_slack,
                       margin=False,
                       len_penalty=False):
     """
@@ -99,6 +100,7 @@ def second_pass_align(src_vecs,
         char_ratio: float. Source to target length ratio.
         skip: float. Cost for instertion and deletion.
         margin: boolean. True if choosing modified cosine similarity score.
+        len_slack: float. activate length penalty when the min/max length ratio is smaller than the slack value.
     Returns:
         pointers: numpy array recording best alignments for each DP cell.
     """
@@ -141,7 +143,7 @@ def second_pass_align(src_vecs,
                                                            margin=margin)
                     if len_penalty:
                         penalty = calculate_length_penalty(src_lens, tgt_lens, i, j,
-                                                           a_1, a_2, char_ratio)
+                                                           a_1, a_2, char_ratio, len_slack)
                         cur_score *= penalty
         
                 score += cur_score
@@ -222,7 +224,9 @@ def calculate_length_penalty(src_lens,
                              tgt_idx,
                              src_overlap,
                              tgt_overlap,
-                             char_ratio):
+                             char_ratio,
+                             len_slack,
+                             ):
     """
     Calculate the length-based similarity score of bitext segment.
     Args:
@@ -233,6 +237,7 @@ def calculate_length_penalty(src_lens,
         src_overlap: int. Number of sentences in source segment.
         tgt_overlap: int. Number of sentences in target segment.
         char_ratio: float. Source to target sentence length ratio.
+        len_slack: float. activate length penalty when the min/max length ratio is smaller than the slack value.
     Returns:
         length_penalty: float. Similarity score based on length differences.
     """
@@ -241,7 +246,11 @@ def calculate_length_penalty(src_lens,
     tgt_l = tgt_l * char_ratio
     min_len = min(src_l, tgt_l)
     max_len = max(src_l, tgt_l)
-    length_penalty = np.log2(1 + min_len / max_len)
+
+    # Shift ratio upward by slack before penalizing
+    ratio = min(min_len / max_len + len_slack, 1. )
+    length_penalty = np.log2(1 + ratio)
+    # length_penalty = np.log2(1 + min_len / max_len)
     return length_penalty
 
 @nb.jit(nopython=True, fastmath=True, cache=True)

@@ -19,6 +19,7 @@ class Bertalign:
                  top_k=3,
                  win=5,
                  skip=-0.1,
+                 len_slack = 0.,
                  margin=True,
                  len_penalty=True,
                  src_lang = None,
@@ -32,6 +33,7 @@ class Bertalign:
         self.skip = skip
         self.margin = margin
         self.len_penalty = len_penalty
+        self.len_slack = len_slack
         
         src_num = len(src_sents)
         tgt_num = len(tgt_sents)
@@ -76,7 +78,7 @@ class Bertalign:
         second_w, second_path = find_second_search_path(first_alignment, self.win, self.src_num, self.tgt_num)
         second_pointers, cost = second_pass_align(self.src_vecs, self.tgt_vecs, self.src_lens, self.tgt_lens,
                                             second_w, second_path, second_alignment_types,
-                                            self.char_ratio, self.skip, margin=self.margin, len_penalty=self.len_penalty)
+                                            self.char_ratio, self.skip, self.len_slack, margin=self.margin, len_penalty=self.len_penalty)
         second_alignment = second_back_track(self.src_num, self.tgt_num, second_pointers, second_path, second_alignment_types)
         # record alignment scores
         scores, length_ratio = second_back_track_score(self.src_num, self.tgt_num, second_pointers, cost, 
