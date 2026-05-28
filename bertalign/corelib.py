@@ -1,8 +1,5 @@
-import torch
-import faiss
 import numpy as np
 import numba as nb
-from sys import platform
 
 def second_back_track(i, j, pointers, search_path, a_types):
     alignment = []
@@ -458,14 +455,7 @@ def find_top_k_sents(src_vecs, tgt_vecs, k=3):
         I: numpy array. Target index matrix of shape (num_src_sents, k).
     """
     embedding_size = src_vecs.shape[1]
-    if torch.cuda.is_available() and platform == 'linux': # GPU version
-        res = faiss.StandardGpuResources() 
-        index = faiss.IndexFlatIP(embedding_size)
-        gpu_index = faiss.index_cpu_to_gpu(res, 0, index)
-        gpu_index.add(tgt_vecs) 
-        D, I = gpu_index.search(src_vecs, k)
-    else: # CPU version
-        index = faiss.IndexFlatIP(embedding_size)
-        index.add(tgt_vecs)
-        D, I = index.search(src_vecs, k)
+    sim = src_vecs @ tgt_vecs.T
+    I = np.argsort(sim, 1)[:,:k] 
+    D = np.take_along_axis(sim, I, 1)
     return D, I
