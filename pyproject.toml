@@ -12,6 +12,7 @@ dependencies = [
     "pandas",
     "spacy",
     "sentence-transformers",
+    "ipython>=8.39.0",
 ]
 [tool.uv]
 package = true
