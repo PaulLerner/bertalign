@@ -3,7 +3,7 @@
 #lid_model = fasttext.load_model('/lustre/fswork/projects/rech/mrn/ujd84yr/FastText/lid.176.ftz')
 
 def clean_text(text):
-    return " ".join(text.split())
+    return " ".join(text.replace("*", " ").strip().split())
     
 # fasttext predict lang on line at a time
 # FIXME can't we rely on trankit's langid directly?
