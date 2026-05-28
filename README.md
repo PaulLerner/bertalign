@@ -53,10 +53,9 @@ Once you get bi-parallel alignments, merge them with `python -m bertalign.multi`
 ## Installation
 
 ```sh
-mamba create --name trankit python=3.10
-mamba install -c conda-forge sentencepiece=0.2.0
-mamba activate trankit
-pip install -e .
+git clone https://github.com/PaulLerner/bertalign.git
+cd bertalign
+uv sync
 ```
 
 
